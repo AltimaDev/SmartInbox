@@ -1,0 +1,10 @@
+.vercelignore
+# Ignore credentials and sensitive data
+GmailReader/credentials/credentials.json
+GmailReader/credentials/token.pickle
+GmailReader/__pycache__
+GmailReader/*.pyc
+.env
+.env.local
+.gitignore
+GmailReaderUI/node_modules
