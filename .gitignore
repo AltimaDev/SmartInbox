@@ -10,3 +10,4 @@ GmailReader/__pycache__/
 venv/
 .venv/
 env/
+.vercel

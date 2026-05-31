@@ -2,20 +2,16 @@
   "version": 2,
   "buildCommand": "cd GmailReaderUI && npm install && npm run build",
   "outputDirectory": "GmailReaderUI/dist",
-  "functions": {
-    "api/**/*.py": {
-      "runtime": "python3.11"
-    }
-  },
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api.py",
-      "methods": ["GET", "POST", "DELETE", "PUT", "PATCH"]
+      "dest": "/api/index.py",
+      "methods": ["GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"]
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/index.html",
+      "status": 200
     }
   ]
 }

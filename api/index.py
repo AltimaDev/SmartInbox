@@ -1,28 +1,19 @@
 """
-Vercel API Functions Directory
-Place all Flask routes here for Vercel serverless deployment
+Vercel Serverless Function for Gmail Reader API
+Routes requests to the Flask application
 """
 
 import os
 import sys
+from pathlib import Path
 
-# Add workspace root to path for imports
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(project_root, 'GmailReader'))
+# Add GmailReader module to path
+gmail_reader_path = str(Path(__file__).parent.parent / "GmailReader")
+sys.path.insert(0, gmail_reader_path)
 
-from GmailReader.api_server import app
-from flask import Request as FlaskRequest
+from api_server import app
 
-def api_handler(request):
-    """
-    Vercel serverless handler for all /api/* routes
-    Converts Vercel request to Flask WSGI format
-    """
-    with app.test_request_context(
-        path=request.path,
-        method=request.method,
-        headers=request.headers,
-        data=request.get_body(),
-        environ_base=request.environ
-    ):
-        return app.dispatch_request()
+# Export app as WSGI application for Vercel
+def handler(request):
+    return app(request)
+
