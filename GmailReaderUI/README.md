@@ -91,6 +91,23 @@ The application will open at `http://localhost:3000`
 npm run build
 ```
 
+### 4. Deploy on Vercel
+
+1. Create a Vercel account at https://vercel.com/.
+2. Import this repository and set the project root to `GmailReaderUI`.
+3. Use:
+   - Build command: `npm run build`
+   - Output directory: `dist`
+4. Deploy.
+
+If you want to use the Vercel CLI from the `GmailReaderUI` folder:
+
+```bash
+cd GmailReaderUI
+npm install
+npx vercel
+```
+
 ## Usage
 
 1. **Search**: Use the search box to filter emails by subject, sender, or content

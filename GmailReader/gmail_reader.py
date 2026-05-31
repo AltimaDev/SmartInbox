@@ -28,11 +28,15 @@ CREDENTIALS_FILE = os.path.join(CREDENTIALS_DIR, 'credentials.json')
 class GmailReader:
     """Authenticate and interact with Gmail API"""
     
-    def __init__(self):
+    def __init__(self, creds=None):
         """Initialize Gmail Reader with authentication"""
         self.creds = None
         self._local = threading.local()
-        self.authenticate()
+        if creds is not None:
+            self.creds = creds
+            self._local.service = discovery.build('gmail', 'v1', credentials=self.creds)
+        else:
+            self.authenticate()
     
     @property
     def service(self):
@@ -49,7 +53,29 @@ class GmailReader:
             with open(TOKEN_FILE, 'rb') as token:
                 creds = pickle.load(token)
         
-        # If no valid credentials, get new ones
+        # If env credentials are provided, use refresh token auth for serverless deployments
+        client_id = os.getenv('GMAIL_CLIENT_ID')
+        client_secret = os.getenv('GMAIL_CLIENT_SECRET')
+        refresh_token = os.getenv('GMAIL_REFRESH_TOKEN')
+        token_uri = os.getenv('GMAIL_TOKEN_URI', 'https://oauth2.googleapis.com/token')
+
+        if client_id and client_secret and refresh_token:
+            creds = Credentials(
+                token=None,
+                refresh_token=refresh_token,
+                token_uri=token_uri,
+                client_id=client_id,
+                client_secret=client_secret,
+                scopes=SCOPES
+            )
+            try:
+                creds.refresh(Request())
+            except Exception as e:
+                raise Exception(
+                    f"Unable to refresh Gmail OAuth token from environment variables: {e}"
+                ) from e
+        
+        # If no valid credentials, get new ones via local file flow
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())

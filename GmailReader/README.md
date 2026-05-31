@@ -98,12 +98,46 @@ GmailReader/
 ├── main.py              # Main application entry point
 ├── gmail_reader.py      # Gmail API interaction
 ├── email_parser.py      # Content extraction and parsing
+├── api_server.py        # Flask REST API server
 ├── requirements.txt     # Python dependencies
 ├── credentials/         # OAuth credentials folder
 │   ├── credentials.json # (Download from Google Cloud)
 │   └── token.pickle     # (Auto-generated after first auth)
 └── extracted_emails.json # Output file
 ```
+
+## Running the Backend Locally
+
+### 1. Set up the API
+
+From the GmailReader directory:
+
+```bash
+pip install -r requirements.txt
+python api_server.py
+```
+
+The API server will start on `http://localhost:5000`
+
+### 2. Connect the Frontend
+
+From the GmailReaderUI directory:
+
+```bash
+npm run dev
+```
+
+The frontend will automatically connect to `http://localhost:5000/api`
+
+## Deploying on Vercel
+
+For **full-stack deployment** (frontend + backend together), see [DEPLOYMENT.md](../DEPLOYMENT.md) in the root directory.
+
+In short:
+1. Push code to GitHub
+2. Import the repository to Vercel
+3. Set environment variables (`GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN`)
+4. Deploy
 
 ## API Reference
 
@@ -170,6 +204,32 @@ clean_text = parser.strip_html(html_content)
 
 # Clean text
 cleaned = parser.clean_text(text)
+```
+
+## REST API Endpoints
+
+All endpoints are prefixed with `/api`:
+
+- `GET /health` - Health check
+- `GET /gmail/status` - Gmail connection status
+- `GET /emails?search=...&category=...&limit=20&offset=0` - Get emails
+- `GET /emails/<id>` - Get email details
+- `GET /emails/search?q=...&sender=...&from_date=...&to_date=...` - Search emails
+- `POST /emails/export/json` - Export as JSON
+- `POST /emails/export/csv` - Export as CSV
+
+## Project Structure
+
+```
+GmailReader/
+├── main.py              # Main application entry point
+├── gmail_reader.py      # Gmail API interaction
+├── email_parser.py      # Content extraction and parsing
+├── requirements.txt     # Python dependencies
+├── credentials/         # OAuth credentials folder
+│   ├── credentials.json # (Download from Google Cloud)
+│   └── token.pickle     # (Auto-generated after first auth)
+└── extracted_emails.json # Output file
 ```
 
 ## Output Example

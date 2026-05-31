@@ -1,0 +1,12 @@
+c:\Gmail\GmailReaderUI\node_modules/
+.DS_Store
+*.log
+dist/
+.env.local
+GmailReader/credentials/token.pickle
+GmailReader/__pycache__/
+*.pyc
+.pytest_cache/
+venv/
+.venv/
+env/
