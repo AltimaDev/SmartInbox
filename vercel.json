@@ -9,7 +9,14 @@
       "methods": ["GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"]
     },
     {
-      "src": "/(.*)",
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1",
+      "headers": {
+        "cache-control": "public, immutable, max-age=31536000"
+      }
+    },
+    {
+      "src": "^/(?!api).*",
       "dest": "/index.html",
       "status": 200
     }
