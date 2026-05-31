@@ -27,7 +27,19 @@ import time
 import re
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000", "http://localhost:3001", "http://localhost:5173", "http://localhost:5174"]}})
+
+# Configure CORS for both local development and Vercel production
+if os.getenv('VERCEL'):
+    # Production: allow the Vercel app domain
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
+else:
+    # Development: allow localhost ports
+    CORS(app, resources={r"/api/*": {"origins": [
+        "http://localhost:3000", 
+        "http://localhost:3001", 
+        "http://localhost:5173", 
+        "http://localhost:5174"
+    ]}})
 
 # Store Gmail reader instance
 gmail_instance = None
@@ -190,13 +202,22 @@ def fetch_single_email(msg_id):
 
 # ==================== API Routes ====================
 
-@app.route('/api/health', methods=['GET'])
+@app.route('/api/health', methods=['GET', 'OPTIONS'])
 def health_check():
     """Health check endpoint"""
-    return jsonify({
-        'status': 'success',
-        'message': 'Gmail Reader API is running'
-    })
+    if request.method == 'OPTIONS':
+        return '', 204
+    
+    try:
+        return jsonify({
+            'status': 'success',
+            'message': 'Gmail Reader API is running'
+        })
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
 
 @app.route('/api/gmail/status', methods=['GET'])
 def gmail_status():
