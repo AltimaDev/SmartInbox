@@ -20,6 +20,8 @@ export default function App() {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('inbox');
   const [showPreloader, setShowPreloader] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showEmailDetailsMobile, setShowEmailDetailsMobile] = useState(false);
   useEffect(() => {
     initializeApp();
   }, []);
@@ -127,6 +129,9 @@ export default function App() {
 
   const handleEmailSelect = (email) => {
     setSelectedEmail(email);
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setShowEmailDetailsMobile(true);
+    }
   };
 
   const handleExportJSON = async () => {
@@ -185,6 +190,8 @@ export default function App() {
           emails={emails}
           onRefresh={handleRefresh}
           loading={loading}
+          sidebarOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
         />
 
         {activeTab === 'dashboard' ? (
@@ -206,19 +213,30 @@ export default function App() {
                   emails={emails}
                   selectedEmail={selectedEmail}
                   onSelectEmail={handleEmailSelect}
+                  className={`w-full md:w-96 border-r border-brand-border bg-white overflow-y-auto ${showEmailDetailsMobile ? 'hidden' : ''}`}
                 />
 
-                {selectedEmail ? (
-                  <EmailDetails
-                    email={selectedEmail}
-                    onExportJSON={handleExportJSON}
-                    onExportCSV={handleExportCSV}
-                  />
+                {/* Desktop / wide layout: show details column; Mobile: show overlay when an email is selected */}
+                {!showEmailDetailsMobile ? (
+                  selectedEmail ? (
+                    <EmailDetails
+                      email={selectedEmail}
+                      onExportJSON={handleExportJSON}
+                      onExportCSV={handleExportCSV}
+                    />
+                  ) : (
+                    <div className="flex-1 flex items-center justify-center bg-brand-light">
+                      <p className="text-brand-text-secondary">No email selected</p>
+                    </div>
+                  )
                 ) : (
-                  <div className="flex-1 flex items-center justify-center bg-brand-light">
-                    <p className="text-brand-text-secondary">
-                      No email selected
-                    </p>
+                  <div className="fixed inset-0 z-50 bg-white">
+                    <EmailDetails
+                      email={selectedEmail}
+                      onExportJSON={handleExportJSON}
+                      onExportCSV={handleExportCSV}
+                      onClose={() => setShowEmailDetailsMobile(false)}
+                    />
                   </div>
                 )}
               </>

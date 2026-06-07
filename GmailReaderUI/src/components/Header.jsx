@@ -1,5 +1,5 @@
 import React from 'react';
-import { MoreVertical } from 'lucide-react';
+import { MoreVertical, Menu } from 'lucide-react';
 
 export default function Header({
   connected,
@@ -7,11 +7,17 @@ export default function Header({
   isLoading,
   activeTab,
   onTabChange,
+  onToggleSidebar,
 }) {
   return (
     <header className="border-b border-brand-border bg-white shadow-sm">
       <div className="px-6 py-4 flex items-center justify-between">
-        
+        {/* Mobile menu button */}
+        <div className="flex items-center md:hidden mr-2">
+          <button onClick={onToggleSidebar} className="p-2 rounded hover:bg-brand-light">
+            <Menu className="w-5 h-5" />
+          </button>
+        </div>
         {/* Left Side */}
         <div className="flex items-center gap-8">
           

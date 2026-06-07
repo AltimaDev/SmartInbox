@@ -8,13 +8,14 @@ export default function Sidebar({
   onCategoryChange,
   emails,
   onRefresh,
-  loading
+  loading,
+  sidebarOpen,
+  onClose,
 }) {
   const categories = ['All', 'Payment', 'Education', 'Information', 'Promo', 'Work'];
   const unreadCount = emails.filter(e => !e.read).length;
-
-  return (
-    <div className="w-80 border-r border-brand-border bg-white flex flex-col">
+  const sidebarContent = (
+    <div className="w-full h-full flex flex-col">
       {/* Search */}
       <div className="p-4 border-b border-brand-border">
         <div className="relative">
@@ -118,5 +119,24 @@ export default function Sidebar({
         </button>
       </div>
     </div>
+  );
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <div className="hidden md:flex md:w-80 border-r border-brand-border bg-white">
+        {sidebarContent}
+      </div>
+
+      {/* Mobile slide-over */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-40 md:hidden">
+          <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+          <div className="absolute left-0 top-0 bottom-0 w-72 bg-white border-r border-brand-border shadow-lg">
+            {sidebarContent}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
