@@ -102,20 +102,45 @@ class GmailReader:
     
     def get_emails(self, query='is:unread', max_results=10):
         """
-        Retrieve emails based on query
+        Retrieve emails based on query with pagination support
         
         Args:
             query (str): Gmail search query (default: unread emails)
-            max_results (int): Maximum number of emails to retrieve
+            max_results (int): Maximum number of emails to retrieve (-1 for all)
             
         Returns:
             list: List of email message IDs
         """
         try:
+            all_messages = []
+            page_token = None
+            
+            # If max_results is -1, fetch all emails using pagination
+            if max_results == -1:
+                max_per_page = 500  # Gmail API max
+                while True:
+                    results = self.service.users().messages().list(
+                        userId='me',
+                        q=query,
+                        maxResults=max_per_page,
+                        pageToken=page_token
+                    ).execute()
+                    
+                    messages = results.get('messages', [])
+                    all_messages.extend(messages)
+                    
+                    page_token = results.get('nextPageToken')
+                    if not page_token:
+                        break
+                
+                print(f"[OK] Found {len(all_messages)} emails matching query: {query}")
+                return all_messages
+            
+            # Otherwise, use single page with limit
             results = self.service.users().messages().list(
                 userId='me',
                 q=query,
-                maxResults=max_results
+                maxResults=min(max_results, 500)
             ).execute()
             
             messages = results.get('messages', [])

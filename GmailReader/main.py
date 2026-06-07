@@ -70,7 +70,7 @@ def main():
         # 'subject:important' - Emails with specific subject
         # 'newer_than:7d' - Emails from last 7 days
         
-        emails = gmail.get_emails(query='is:unread', max_results=5)
+        emails = gmail.get_emails(query='is:unread', max_results=-1)
         
         if not emails:
             print("No emails found matching the query.")
